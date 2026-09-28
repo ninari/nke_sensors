@@ -1,0 +1,17 @@
+{
+  "target_system": "Cockpit",
+  "target_cockpit_api_version": "v1.19.0-beta.7",
+  "widgets": [
+    {
+      "name": "AirTempSensor",
+      "config_iframe_url": null,
+      "mavlink_binding": {
+        "message_id": 251,
+        "message_name": "NAMED_VALUE_FLOAT",
+        "fields": {
+          "value": "temperature"
+        }
+      }
+    }
+  ]
+}

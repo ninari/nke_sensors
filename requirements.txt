@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+adafruit-blinka
+adafruit-circuitpython-ads1x15
+flask
+
+

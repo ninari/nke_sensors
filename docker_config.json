@@ -1,0 +1,23 @@
+{
+    "Image": "softmastergeo/analogsensor:tagname",
+    "ExposedPorts": {
+      "5437/tcp": {}
+    },
+    "HostConfig": {
+      "Privileged": true,
+      "NetworkMode": "host",
+      "PortBindings": {
+        "5437/tcp": [
+          { "HostPort": "5437" }
+        ]
+      },
+      "Binds": [
+        "/usr/blueos/extensions/analogsensor:/app/logs",
+        "/dev:/dev"
+      ],
+      "ExtraHosts": [
+        { "host.docker.internal": "host-gateway" }
+      ]
+    }
+  }
+  

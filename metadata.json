@@ -1,0 +1,11 @@
+{
+  "name": "Analog Sensor",
+  "id": "analogsensor",
+  "description": "Reads analog sensor values",
+  "version": "1.0.0",
+  "categories": ["services"],
+  "new_page": true,
+  "api": "http://localhost:5437",
+  "webpage": "http://localhost:5437/ui",
+  "icon": "mdi:chip"
+}

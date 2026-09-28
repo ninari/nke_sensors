@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <title>Campbell Sensor Data</title>
+  <link rel="stylesheet" href="/static/style.css">
+
+</head>
+<body>
+  <h1>Campbell Sensor Data</h1>
+  <div class="dashboard">
+    <div class="current-temp" id="temp-current">
+      <span class="label">TEMPVALUE</span>
+      <span class="value" id="temperature">--°C</span>
+      <span class="time" id="update-time">Updated --:--</span>
+    </div>
+
+    <div class="stats">
+      <div class="box">
+        <h3>Min Temp</h3>
+        <p id="min-temp">--°C</p>
+      </div>
+      <div class="box">
+        <h3>Max Temp</h3>
+        <p id="max-temp">--°C</p>
+      </div>
+      <div class="box-status">
+        <h3>Status</h3>
+        <p><span class="check">✔</span> Normal</p>
+      </div>
+    </div>
+
+    <div class="chart">
+      <canvas id="tempChart"></canvas>
+    </div>
+
+    <div class="buttons">
+      <button onclick="refreshData()">Refresh</button>
+      <button onclick="openSettings()">Settings</button>
+      <button onclick="viewLogs()">Logs</button>
+      <button onclick="exportData()">Export</button>
+    </div>
+  </div>
+
+  <canvas id="tempChart"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/script.js"></script>
+  
+  <h1>Campbell Sensor Data</h1>
+  <div class="dashboard">
+    <div class="current-temp" id="temp-current">
+      <span class="label">TEMPVALUE</span>
+      <span class="value" id="temperature">--°C</span>
+      <span class="time" id="update-time">Updated --:--</span>
+    </div>
+
+    <div class="stats">
+      <div class="box">
+        <h3>Min Temp</h3>
+        <p id="min-temp">--°C</p>
+      </div>
+      <div class="box">
+        <h3>Max Temp</h3>
+        <p id="max-temp">--°C</p>
+      </div>
+      <div class="box-status">
+        <h3>Status</h3>
+        <p><span class="check">✔</span> Normal</p>
+      </div>
+    </div>
+
+    <div class="chart">
+      <canvas id="tempChart"></canvas>
+    </div>
+
+    <div class="buttons">
+      <button onclick="refreshData()">Refresh</button>
+      <button onclick="openSettings()">Settings</button>
+      <button onclick="viewLogs()">Logs</button>
+      <button onclick="exportData()">Export</button>
+    </div>
+  </div>
+
+  <canvas id="tempChart"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/script.js"></script>
+</body>
+</html>
+
+<script>
+async function loadSensorData() {
+  const response = await fetch("/api/sensor");
+  const data = await response.json();
+
+  document.getElementById("temperature").textContent = data.temperature+ "°C";
+  document.getElementById("min-temp").textContent = data.min + "°C";
+  document.getElementById("max-temp").textContent = data.max + "°C";
+  document.getElementById("update-time").textContent = "Updated " + data.time;
+}
+
+
+  // Auto-refresh every 5 seconds
+  setInterval(loadSensorData, 1000);
+  //loadSensorData();
+</script>

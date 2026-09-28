@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 20px;
+  }
+
+
+
+  .dashboard {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .current-temp {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .current-temp .label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .current-temp .value {
+    font-size: 2em;
+    color: #0078d7;
+  }
+  
+  .current-temp .time {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  #temp-box { 
+    background: #275dc9;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    margin: 0 5px;
+  }
+
+
+  .box {
+    background: #275dc9;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    margin: 0 5px;
+  }
+  
+  .box h3 {
+    margin-bottom: 10px;
+  }
+  
+  .status .check {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .chart {
+    margin-bottom: 20px;
+  }
+  
+  .buttons {
+    text-align: center;
+  }
+  
+  button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    background: #0078d7;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #005fa3;
+  }
+  
+
+

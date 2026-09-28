@@ -1,0 +1,154 @@
+Metadata-Version: 2.1
+Name: pcf8591-library
+Version: 0.0.3
+Summary: Library to use pcf8591 i2c analog IC with Arduino, Raspberry Pi Pico and rp2040 boards, esp32, SMT32 and ESP8266. Can read analog value and write analog value with only 2 wire. 
+Home-page: https://github.com/xreef/PCF8591_micropython_library
+Author: Renzo Mischianti
+Author-email: Renzo Mischianti <renzo@mischianti.org>
+Maintainer: Renzo Mischianti
+Maintainer-email: Renzo Mischianti <renzo@mischianti.org>
+License: The MIT License (MIT)
+        
+        Copyright (c) 2017 Renzo Mischianti www.mischianti.org All right reserved.
+        
+        You may copy, alter and reuse this code in any way you like, but please leave
+        reference to www.mischianti.org in your comments if you redistribute this code.
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+        
+Project-URL: homepage, https://www.mischianti.org
+Project-URL: Documentation, https://www.mischianti.org/2019/01/03/pcf8591-i2c-analog-i-o-expander/
+Project-URL: Documentazione, https://www.mischianti.org/it/2019/01/03/pcf8591-un-expander-i2c-i-o-analogico/
+Project-URL: Repository, https://github.com/xreef/PCF8591_micropython_library
+Project-URL: Bug Tracker, https://github.com/xreef/PCF8591_micropython_library/issues
+Project-URL: Examples, https://github.com/xreef/PCF8591_micropython_library/tree/master/examples
+Keywords: micropython,analog, digital, i2c, encoder, expander, pcf8591, pcf8591a, esp32, esp8266, stm32, SAMD, Arduino, wire, Raspberry, rp2040
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Programming Language :: Python :: Implementation :: MicroPython
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+
+<div>
+<a href="https://www.mischianti.org/forums/forum/mischiantis-libraries/pcf8591-i2c-analog-expander/"><img
+  src="https://github.com/xreef/LoRa_E32_Series_Library/raw/master/resources/buttonSupportForumEnglish.png" alt="Support forum pcf8591 English"
+   align="right"></a>
+</div>
+<div>
+<a href="https://www.mischianti.org/it/forums/forum/le-librerie-di-mischianti/pcf8591-expander-analogico-i2c/"><img
+  src="https://github.com/xreef/LoRa_E32_Series_Library/raw/master/resources/buttonSupportForumItaliano.png" alt="Forum supporto pcf8591 italiano"
+  align="right"></a>
+</div>
+
+#
+#### www.mischianti.org
+
+### MicroPython Library to use i2c analog IC with arduino and esp8266. Can read analog value and write analog value with only 2 wire (perfect for ESP-01).
+
+#### Changelog
+ - 07/11/2023: v0.0.3 Fix on read when write is active and running [#Forum](https://mischianti.org/forums/topic/micropython-i2c-pcf8591-round-value-problem-raspberry-pi-pico/#post-28043)
+ - 16/05/2023: v0.0.2 Minor fix on read and write [#Forum](https://www.mischianti.org/forums/topic/micropython-i2c-pcf8591-round-value-problem-raspberry-pi-pico/)
+ - 18/04/2023: v0.0.1 Initial commit of stable version.
+
+I try to simplify the use of this IC, with a minimal set of operation.
+
+#### Installation
+To install the library execute the following command:
+
+```bash
+pip install pcf8591-library
+```
+
+**Constructor:**
+Pass the address of I2C 
+```python
+from PCF8591 import PCF8591
+from machine import I2C, Pin
+    
+# Initialize the I2C bus
+i2c = I2C(0, scl=Pin(22), sda=Pin(21))  
+
+# Initialize the PCF8591
+pcf8591 = PCF8591(0x48, i2c)
+if pcf8591.begin():
+    print("PCF8591 found")
+
+```
+or
+```python
+from PCF8591 import PCF8591
+
+pcf8591 = PCF8591(0x48, sda=21, scl=22)
+if pcf8591.begin():
+    print("PCF8591 found")
+
+```
+
+To read all analog input in one 
+```python
+# Main loop
+while True:
+    # Read all analog input channels
+    ain0, ain1, ain2, ain3 = pcf8591.analog_read_all()
+
+    # Print the results
+    print("AIN0:", ain0, "AIN1:", ain1, "AIN2:", ain2, "AIN3:", ain3)
+
+    # Wait for 1 second
+    utime.sleep(1)
+```
+
+If you want to read a single input:
+```python
+print("AIN0 ", pcf8591.analog_read(PCF8591.AIN0))
+print("AIN1 ", pcf8591.analog_read(PCF8591.AIN1))
+print("AIN2 ", pcf8591.analog_read(PCF8591.AIN2))
+print("AIN3 ", pcf8591.analog_read(PCF8591.AIN3))
+```
+
+If you want to write a value:
+```python
+pcf8591.analog_write(255)
+utime.sleep(1)
+pcf8591.analog_write(128)
+utime.sleep(1)
+pcf8591.analog_write(0)
+```
+
+You can also read and write voltage
+
+```python
+pcf8591.voltage_write(3.3)
+utime.sleep(1)
+pcf8591.voltage_write(1.65)
+utime.sleep(1)
+pcf8591.voltage_write(0)
+```
+or
+```python
+print("AIN0 ", pcf8591.voltage_read(PCF8591.AIN0))
+print("AIN1 ", pcf8591.voltage_read(PCF8591.AIN1))
+print("AIN2 ", pcf8591.voltage_read(PCF8591.AIN2))
+print("AIN3 ", pcf8591.voltage_read(PCF8591.AIN3))
+```
+
+
+For the examples I use this wire schema on breadboard:
+![esp32 and pcf8591 wiring](https://www.mischianti.org/wp-content/uploads/2023/04/esp32-pcf8591-wiring_bb.jpg)
