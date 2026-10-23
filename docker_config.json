@@ -1,18 +1,18 @@
 {
-    "Image": "softmastergeo/analogsensor:tagname",
+    "Image": "supportsoftmaster/nke_sensors:nketag",
     "ExposedPorts": {
-      "5437/tcp": {}
+      "5537/tcp": {}
     },
     "HostConfig": {
       "Privileged": true,
       "NetworkMode": "host",
       "PortBindings": {
-        "5437/tcp": [
-          { "HostPort": "5437" }
+        "5537/tcp": [
+          { "HostPort": "5537" }
         ]
       },
       "Binds": [
-        "/usr/blueos/extensions/analogsensor:/app/logs",
+        "/usr/blueos/extensions/nke_sensors:/app/logs",
         "/dev:/dev"
       ],
       "ExtraHosts": [

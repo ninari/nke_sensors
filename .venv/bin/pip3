@@ -1,4 +1,4 @@
-#!/home/workspace/.local/analog-sensor-extension/.venv/bin/python
+#!/home/workspace/.local/nke_sensors/.venv/bin/python3
 import sys
 from pip._internal.cli.main import main
 if __name__ == '__main__':

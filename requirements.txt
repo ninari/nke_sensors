@@ -1,7 +1,8 @@
-fastapi
-uvicorn
-adafruit-blinka
-adafruit-circuitpython-ads1x15
-flask
 
+flask==3.0.3
+pymodbus==3.6.1   # ან 2.5.3 თუ ძველი API გჭირდება
+pymavlink==2.4.41
+adafruit-blinka==8.29.0
+RPi.GPIO==0.7.1
+smbus2==0.6.1
 

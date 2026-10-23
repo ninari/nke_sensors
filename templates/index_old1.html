@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensor Monitoring System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body { background-color: #f5f5f5; font-family: Arial, sans-serif; }
+    .card { margin: 20px 0; }
+    .sensor-value { font-size: 2rem; font-weight: bold; color: #0078d7; }
+  </style>
+</head>
+<body class="container">
+
+  <h1 class="text-center mt-4">Sensor Monitoring System</h1>
+
+  <!-- Connection Controls -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Serial Port</h5>
+      <div class="d-flex align-items-center">
+        <select id="port" class="form-select w-auto">
+          <option>/dev/ttyUSB0</option>
+          <option>/dev/ttyUSB1</option>
+        </select>
+        <button class="btn btn-success ms-3" onclick="start()">START</button>
+        <button class="btn btn-danger ms-2" onclick="stop()">STOP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Status</h5>
+      <p id="system-status">Waiting for data...</p>
+      <p id="transducer-status">Transducer: Waiting</p>
+      <p id="sensor-status">Sensor: Waiting</p>
+    </div>
+  </div>
+
+  <!-- pH Sensor -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">pH Sensor</h5>
+      <p id="ph-value" class="sensor-value">--</p>
+      <canvas id="phChart"></canvas>
+    </div>
+  </div>
+
+  <!-- EC Sensor -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">EC Sensor</h5>
+      <p id="ec-value" class="sensor-value">--</p>
+      <canvas id="ecChart"></canvas>
+    </div>
+  </div>
+
+  <!-- DO Sensor -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">DO Sensor</h5>
+      <p id="do-value" class="sensor-value">--</p>
+      <canvas id="doChart"></canvas>
+    </div>
+  </div>
+
+  <!-- CLF Sensor -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">CLF Sensor</h5>
+      <p id="clf-value" class="sensor-value">--</p>
+      <canvas id="clfChart"></canvas>
+    </div>
+  </div>
+
+  <!-- MAVLink Attitude -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">MAVLink Attitude (Roll/Pitch/Yaw)</h5>
+      <canvas id="attitudeChart"></canvas>
+    </div>
+  </div>
+
+  <!-- MAVLink GPS -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">MAVLink GPS Altitude</h5>
+      <canvas id="gpsChart"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Example chart setup for pH
+    const phChart = new Chart(document.getElementById("phChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'pH Value', data: [], borderColor: '#0078d7', fill: false }] }
+    });
+
+    // Example chart setup for EC
+    const ecChart = new Chart(document.getElementById("ecChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'EC Value', data: [], borderColor: '#28a745', fill: false }] }
+    });
+
+    // Example chart setup for DO
+    const doChart = new Chart(document.getElementById("doChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'DO Value', data: [], borderColor: '#17a2b8', fill: false }] }
+    });
+
+    // Example chart setup for CLF
+    const clfChart = new Chart(document.getElementById("clfChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'CLF Value', data: [], borderColor: '#ffc107', fill: false }] }
+    });
+
+    // Attitude chart
+    const attitudeChart = new Chart(document.getElementById("attitudeChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Roll', data: [], borderColor: 'red', fill: false },
+        { label: 'Pitch', data: [], borderColor: 'green', fill: false },
+        { label: 'Yaw', data: [], borderColor: 'blue', fill: false }
+      ]}
+    });
+
+    // GPS chart
+    const gpsChart = new Chart(document.getElementById("gpsChart"), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Altitude (m)', data: [], borderColor: 'purple', fill: false }] }
+    });
+
+    // Example refresh function for pH
+    function start() {
+
+  document.getElementById("system-status").textContent =
+    "Collecting data...";
+
+  setInterval(async () => {
+
+    try {
+
+      const response = await fetch("/modbus/data");
+
+      const data = await response.json();
+
+      document.getElementById("system-status").textContent =
+        "Connected";
+
+      document.getElementById("sensor-status").textContent =
+        "Sensor: Online";
+
+      document.getElementById("transducer-status").textContent =
+        "Transducer: Online";
+
+      document.getElementById("ph-value").textContent =
+        data.ph.toFixed(2);
+
+      document.getElementById("ec-value").textContent =
+        data.conductivity;
+
+      document.getElementById("do-value").textContent =
+        data.dissolved_oxygen_mg_l.toFixed(2);
+
+      document.getElementById("clf-value").textContent =
+        data.turbidity.toFixed(1);
+
+    } catch (err) {
+
+      document.getElementById("system-status").textContent =
+        "Connection Lost";
+
+      console.error(err);
+    }
+
+  }, 1000);
+}
+
+    function stop() {
+      document.getElementById("system-status").textContent = "Stopped";
+    }
+    
+    const maxPoints = 30;
+
+    function addPoint(chart, value) {
+
+      chart.data.labels.push(
+        new Date().toLocaleTimeString()
+      );
+
+      chart.data.datasets[0].data.push(value);
+
+      if (chart.data.labels.length > maxPoints) {
+
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+
+      chart.update();
+    }
+  </script>
+</body>
+</html>
