@@ -488,7 +488,7 @@ def log_loop():
 
             #export_log("CH1", latest_value or 0, most_common_value or 0)
             test_modbus()
-            time.sleep(2)
+            time.sleep(4)
         except Exception as e:
             logging.error(f"Error in log_loop: {e}")
             time.sleep(1)
