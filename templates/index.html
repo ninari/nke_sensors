@@ -193,15 +193,60 @@ class="sensor-value">
 <div class="card">
 <div class="card-body">
 
-<h5>Turbidity</h5>
+
+
+<h5>Salinity</h5>
 
 <div
-id="turbidity-value"
+id="salinity-value"
 class="sensor-value">
 --
 </div>
 
-<canvas id="turbidityChart"></canvas>
+<canvas id="salinityChart"></canvas>
+
+</div>
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card">
+<div class="card-body">
+
+
+
+<h5>Preasure</h5>
+
+<div
+id="preasure-value"
+class="sensor-value">
+--
+</div>
+
+<canvas id="preasureChart"></canvas>
+
+</div>
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card">
+<div class="card-body">
+
+
+<h5>Orp</h5>
+
+<div
+id="orp-value"
+class="sensor-value">
+--
+</div>
+
+<canvas id="orpChart"></canvas>
 
 </div>
 </div>
@@ -314,10 +359,24 @@ createChart(
     "#20c997"
 );
 
-const turbidityChart =
+const salinityChart =
 createChart(
-    "turbidityChart",
-    "Turbidity",
+    "salinityChart",
+    "Salinity",
+    "#20c997"
+);
+
+const preasureChart =
+createChart(
+    "preasureChart",
+    "Preasure",
+    "#20c997"
+);
+
+const orpChart =
+createChart(
+    "orpChart",
+    "Orp",
     "#ffc107"
 );
 
@@ -443,10 +502,22 @@ async function updateSensors(){
         + " mg/L";
 
         document.getElementById(
-            "turbidity-value"
+            "orp-value"
         ).textContent =
-        data.turbidity.toFixed(1)
+        data.orp.toFixed(1)
         + " NTU";
+
+        document.getElementById(
+            "salinity-value"
+        ).textContent =
+        data.salinity.toFixed(2)
+        + " PSU";
+
+        document.getElementById(
+            "preasure-value"
+        ).textContent =
+        data.barometric_pressure
+        + " mbar";
 
         addPoint(
             temperatureChart,
@@ -474,8 +545,18 @@ async function updateSensors(){
         );
 
         addPoint(
-            turbidityChart,
-            Number(data.turbidity)
+            orpChart,
+            Number(data.orp)
+        );
+
+        addPoint(
+            salinityChart,
+            Number(data.salinity)
+        );
+
+        addPoint(
+            preasureChart,
+            Number(data.barometric_pressure)
         );
 
     }

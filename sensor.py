@@ -42,6 +42,8 @@ if not os.path.exists(
 
             "Timestamp",
 
+            "BarometricPressure",
+
             "Temperature",
 
             "pH",
@@ -53,6 +55,8 @@ if not os.path.exists(
             "Conductivity20",
 
             "Conductivity25",
+
+            "Salinity",
 
             "DO_mg_L",
 
@@ -76,7 +80,7 @@ if not os.path.exists(
         ])
 
 client = ModbusSerialClient(
-        port="/dev/ttyUSB1",
+        port="/dev/ttyUSB0",
         baudrate=19200,
         parity="E",
         stopbits=1,
@@ -84,6 +88,8 @@ client = ModbusSerialClient(
         timeout=1
     )
 client.connect()
+
+
 
 def safe_value(val):
     if val is None or math.isnan(val):
@@ -129,8 +135,10 @@ logging.getLogger("werkzeug").setLevel(logging.WARNING)
 #app = Flask(__name__)
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
-# MAVLink connection (UDP port 14550 არის BlueOS default)
-master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
+
+master = mavutil.mavlink_connection(
+    'udpin:0.0.0.0:14600'
+)
 
 latest_attitude = {}
 latest_gps = {}
@@ -154,7 +162,6 @@ def mavlink_loop():
                 "roll": msg.roll,
                 "pitch": msg.pitch,
                 "yaw": msg.yaw
-                
             }
         elif msg.get_type() == "GPS_RAW_INT":
             latest_gps = {
@@ -163,11 +170,10 @@ def mavlink_loop():
                 "alt": msg.alt/1000.0
             }
             print("GPS:", latest_gps)
-
-# Background thread for MAVLink
-t = threading.Thread(target=mavlink_loop, daemon=True)
-t.start()
-
+            logging.info(f"GPS Data: {latest_gps}"
+            )
+        
+        
 @app.route("/mavlink/attitude")
 def attitude():
     return jsonify(latest_attitude)
@@ -178,10 +184,6 @@ def gps():
 
 
 sensor_value = 42
-
-
-
-
     
 @app.route("/")
 def index():
@@ -268,7 +270,9 @@ def docs_json():
 def sensor_api():
 
     return jsonify({
+        "barometric_pressure": result_array[0] if len(result_array) > 0 else 0,
         "temperature": latest_value if latest_value is not None else 0,
+        "salinity": result_array[13] / 100 if len(result_array) > 13 else 0,
         "registers": result_array,
         "time": datetime.datetime.now().strftime("%H:%M:%S")
     })
@@ -294,6 +298,7 @@ def modbus_data():
         })
 
     return jsonify({
+        "barometric_pressure": result_array[0],
         "temperature": result_array[1] / 100,
         "ph": result_array[2] / 100,
         "orp": result_array[3] / 10,
@@ -345,6 +350,8 @@ def test_modbus():
             f"📊 migebuli monacemebi: {result.registers}"
         )
 
+        barometric_pressure = result_array[0]
+
         temperature = result_array[1] / 100.0
 
         ph = result_array[2] / 100.0
@@ -365,6 +372,8 @@ def test_modbus():
             (result_array[9] << 16)
             | result_array[10]
         )
+
+        salinity = result_array[13] / 100.0
 
         do_mg_l = (
             result_array[17] / 100.0
@@ -424,6 +433,8 @@ def test_modbus():
                 datetime.datetime.now()
                 .strftime("%Y-%m-%d %H:%M:%S"),
 
+                barometric_pressure,
+
                 temperature,
 
                 ph,
@@ -433,7 +444,8 @@ def test_modbus():
                 conductivity,
                 conductivity20,
                 conductivity25,
-
+                salinity,
+                
                 do_mg_l,
                 do_percent,
 
@@ -464,6 +476,7 @@ def test_modbus():
        # )
 
 
+
 def log_loop():
     global  most_common_value
     while True:
@@ -488,7 +501,7 @@ def log_loop():
 
             #export_log("CH1", latest_value or 0, most_common_value or 0)
             test_modbus()
-            time.sleep(4)
+            time.sleep(3)
         except Exception as e:
             logging.error(f"Error in log_loop: {e}")
             time.sleep(1)
@@ -498,6 +511,10 @@ def log_loop():
 
 if __name__ == "__main__":
     
+    # Thread 1
+    threading.Thread(target=mavlink_loop, daemon=True).start()
+
+    # Thread 2
     # პარალელურად ვუშვებთ ლოგების loop‑ს
     t = threading.Thread(target=log_loop, daemon=True)
     t.start()  
